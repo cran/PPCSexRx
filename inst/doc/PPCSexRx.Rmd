@@ -1,0 +1,141 @@
+---
+title: "PPCSexRx: Evidence-Based SSTAE Support With Tiered Clinical Safety"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PPCSexRx: Evidence-Based SSTAE Support With Tiered Clinical Safety}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>"
+)
+library(PPCSexRx)
+```
+
+## Introduction: Scientific Backbone and Clinical Decision Support
+
+**PPCSexRx** encodes sub-symptom threshold aerobic exercise (SSTAE) algorithms developed from a systematic review recognised with the **2026 NATA Foundation Best Summary Evidence Research Award** (Li, 2026). The peer-reviewed evidence synthesis and CAT logic are archived at OSF (doi:[10.17605/osf.io/kvuf6](https://doi.org/10.17605/osf.io/kvuf6)).
+
+The package is intentionally framed as a **clinical decision support system (CDSS)**, not a black-box calculator: it translates GRADE-rated evidence into executable screening, prescribing, and progress-tracking rules while surfacing certainty, citations, and explicit safety stops at every tier of resource availability.
+
+The intended workflow mirrors bedside practice:
+
+```
+screen_ppcs()  -->  prescribe_ppcs()  -->  track_progress()
+```
+
+> **GRADE disclosure:** SSTAE recommendations encoded here carry **LOW certainty** evidence with a **conditional recommendation FOR** use in adolescents meeting PPCS definitions (Li, 2026). Licensed clinicians remain accountable for all treatment decisions.
+
+---
+
+## Case Study 1: The Gold Standard (Well-Equipped Clinic With BCTT)
+
+### Scenario
+
+A **16-year-old** athlete presents **35 days** after concussion with persistent symptoms consistent with PPCS. Your clinic completed a Buffalo Concussion Treadmill Test (BCTT); symptom-threshold heart rate (**HRst**) was **145 bpm**. There are **no** active vestibular or cervical contraindications.
+
+This vignette section demonstrates **scientific fidelity**: when objective exertional testing exists, `prescribe_ppcs()` prefers **80% of HRst** as the prescription anchor (Li, 2026, p.11).
+
+### Clinical screen (documentation checkpoint)
+
+```{r cs1-screen}
+screen_ppcs(
+  age              = 16,
+  days_post_injury = 35,
+  vestibular_symptoms = FALSE,
+  cervical_symptoms   = FALSE
+)
+```
+
+### Prescription anchored to BCTT
+
+```{r cs1-prescribe}
+rx_gold <- prescribe_ppcs(
+  age              = 16,
+  days_post_injury = 35,
+  hrst             = 145,
+  vestibular_symptoms = FALSE,
+  cervical_symptoms   = FALSE
+)
+rx_gold
+```
+
+The computed target HR implements **`r round(0.8 * 145)` bpm (= 80% x 145 bpm)** together with structured disclosures (`method`, `evidence_grade`, `safety_warning`) so auditors can trace **every numeric output back to protocol language**.
+
+---
+
+## Case Study 2: Resource-Limited Setting with Mandatory Safety Guardrails
+
+### Scenario
+
+A **14-year-old** student-athlete is seen at a **remote high school** without treadmill testing capability **20 days** post-injury. Even though HR monitors might be available, the athlete **does not yet meet PPCS chronology** (fewer than 28 days post-injury are handled outside this SSTAE pathway).
+
+This section demonstrates **operational safety**: the package refuses to mint an SSTAE prescription when core eligibility gates fail, regardless of whether `hrst` is omitted (resource fallback path).
+
+### Screening surfaces early-phase contraindication
+
+```{r cs2-screen}
+screen_ppcs(
+  age              = 14,
+  days_post_injury = 20,
+  vestibular_symptoms = FALSE,
+  cervical_symptoms   = FALSE
+)
+```
+
+### Hard stop inside `prescribe_ppcs()`
+
+Attempting to prescribe without satisfying PPCS timing triggers an immediate error---there is **no silent downgrade** to age-based intensities.
+
+```{r cs2-prescribe-stop, error = TRUE}
+prescribe_ppcs(
+  age              = 14,
+  days_post_injury = 20,
+  vestibular_symptoms = FALSE,
+  cervical_symptoms   = FALSE
+)
+```
+
+Expected safeguard text includes **`Contraindicated: PPCS defined as >=28 days post-injury.`**, reinforcing that **advanced arithmetic never substitutes for foundational eligibility checks**.
+
+Together, Case Studies 1 and 2 convey the design thesis demanded by tertiary clinics **and** resource-constrained outreach programmes: **precision where physiology is measured**, **deterministic refusal where physiology must not yet be stressed**.
+
+---
+
+## Additional Notes for Deployments Beyond These Examples
+
+- **`screen_ppcs()`** captures referrals for vestibular, cervical, age-out-of-evidence, or vision-risk contexts before exertional planning advances.
+- **`track_progress()`** operationalises session-by-session PCSS deltas with HR titration tied to Li (2026), p.14 progression/stop logic.
+
+Always pair package outputs with local policies, concussion RTP statutes, and supervising physician judgement.
+
+---
+
+## Evidence Base and Limitations
+
+Key caveats from the underlying CAT:
+
+- Evidence certainty remains **LOW**; recommendation strength is **conditional**.
+- Included trials employed heterogeneous dosing and outcomes---encoded guardrails intentionally bias toward conservatism when inputs are ambiguous.
+- PPCSexRx augments, but never replaces, clinician oversight.
+
+## References
+
+Li G. (2026). Sub-symptom Threshold Aerobic Exercise for Adolescents With
+Persistent Post-concussion Symptoms (PPCS): A Critically Appraised Topic.
+Winner, NATA Foundation Best Summary Evidence Research Award.
+<https://doi.org/10.17605/osf.io/kvuf6>
+
+Leddy JJ, Haider MN, Ellis MJ, et al. Early Subthreshold Aerobic Exercise
+for Sport-Related Concussion. *JAMA Pediatr.* 2019;173(4):319--325.
+
+Kurowski BG, et al. Aerobic Exercise for Adolescents With Prolonged Symptoms
+After Mild Traumatic Brain Injury. *J Head Trauma Rehabil.*
+2017;32(2):79--89.
+
+Vernau BT, Haider MN, Fleming A, et al. Exercise-Induced Vision Dysfunction
+Early After Sport-Related Concussion Is Associated With Persistent
+Postconcussive Symptoms. *Clin J Sport Med.* 2023;33(4):388--394.
