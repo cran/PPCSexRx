@@ -1,9 +1,9 @@
 Package: PPCSexRx
 Type: Package
 Title: Prescribe Sub-Symptom Exercise for Adolescent Concussion
-Version: 0.1.0
-Authors@R: person("Guang", "Li", email = "guangli@isu.edu", role = c("aut", "cre"),
-    comment = c(ORCID = "0009-0004-2807-9029"))
+Version: 0.1.1
+Authors@R: person("Guang", "Li", email = "contact@guanglab.org", role = c("aut", "cre"),
+    comment = c(ORCID = "0009-0004-2807-9029", "Idaho State University"))
 Description: A clinical decision support system for sub-symptom threshold
     aerobic exercise (SSTAE) prescription in adolescents with persistent
     post-concussion symptoms (PPCS). Implements an evidence-based protocol
@@ -22,11 +22,12 @@ RoxygenNote: 8.0.0
 Imports: graphics, utils
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
-URL: https://github.com/guangl10/PPCSexRx
+URL: https://github.com/guangl10/PPCSexRx, https://guanglab.org
 BugReports: https://github.com/guangl10/PPCSexRx/issues
 NeedsCompilation: no
-Packaged: 2026-05-27 21:09:57 UTC; liguang
-Author: Guang Li [aut, cre] (ORCID: <https://orcid.org/0009-0004-2807-9029>)
-Maintainer: Guang Li <guangli@isu.edu>
+Packaged: 2026-06-15 05:24:18 UTC; liguang
+Author: Guang Li [aut, cre] (ORCID: <https://orcid.org/0009-0004-2807-9029>,
+    Idaho State University)
+Maintainer: Guang Li <contact@guanglab.org>
 Repository: CRAN
-Date/Publication: 2026-06-01 08:30:15 UTC
+Date/Publication: 2026-06-15 07:50:31 UTC
